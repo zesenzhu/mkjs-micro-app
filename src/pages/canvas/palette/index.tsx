@@ -37,6 +37,7 @@ const Canvas: React.FC = () => {
       });
       // draw();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const Canvas: React.FC = () => {
       removeTouch && removeTouch();
       removeClick && removeClick();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawType]);
   const moveEvent = (type: string, event: any) => {
     moveRef.current = event;

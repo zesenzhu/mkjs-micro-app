@@ -96,14 +96,22 @@
     "start": "node scripts/start.js",
     "start:micro": "rescripts start",
     "build": "node scripts/build.js",
+    "build:micro": "rescripts build",
     "test": "node scripts/test.js",
     "lint": "eslint --ext js,ts,tsx, src --max-warnings 5",
     "test:nowatch": "cross-env CI=true npm run test",
-    "prepublishOnly": "npm run lint && npm run build",
+    "prepublishOnly": "NODE_ENV=production npm run lint && npm run build:micro",
     "publish": "npm run prepublishOnly && tar -zcvf release.tgz docker build package.json README.md"
   },
   "eslintConfig": {
-    "extends": []
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 7,
+      "sourceType": "module"
+    }
   },
   "browserslist": {
     "production": [
