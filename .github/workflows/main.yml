@@ -1,0 +1,69 @@
+# 自动部署的名称
+name:
+  Publish And Deploy next
+  # 监听push只有是提交tag才会部署
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "v*"
+
+jobs:
+  # 打包及发布
+  build-and-deploy:
+    # 运行环境
+    runs-on: ubuntu-latest
+
+    steps: # 步骤
+      # 下载源码
+      - name: Checkout
+        uses: actions/checkout@master
+
+      # 打包构建
+      - name: Build
+        uses: actions/setup-node@master
+      # - run: npm install
+      - run: npm i -g npminstall && npminstall
+      # 将app config文件打包压缩为release.tgz
+      - run: npm run prepublishOnly
+      - name: Deploy to Server # 第四步，rsync推送文件
+        uses: AEnterprise/rsync-deploy@v1.0 # 使用别人包装好的步骤镜像
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }} # 引用配置，SSH私钥
+          ARGS: -avz --delete --exclude='*.pyc' # rsync参数，排除.pyc文件
+          SERVER_PORT: ${{ secrets.PORT }} # SSH端口
+          FOLDER: ./build/* # 要推送的文件夹，路径相对于代码仓库的根目录
+          SERVER_IP: ${{ secrets.HOST }} # 引用配置，服务器的host名（IP或者域名domain.com）
+          USERNAME: ${{ secrets.USERNAME }} # 引用配置，服务器登录名
+          SERVER_DESTINATION: ${{secrets.SERVER_DESTINATION}}/ # 部署到目标文件夹
+      # 部署到服务器
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} # 连接服务器参数
+          username: ${{ secrets.USERNAME }} # 连接服务器参数
+          password: ${{ secrets.PASSWORD }} # 连接服务器参数
+          port: ${{ secrets.PORT }} # 连接服务器参数
+          script: | # 连接服务器后执行的命令
+            cd ${{secrets.SERVER_DESTINATION}} # 确保远程服务器必须有这个文件夹
+            git init
+            git remote add origin git@github.com:zesenzhu/mkjs-main.git;
+            # git config pull.rebase true;
+            git config core.sparsecheckout true
+            echo "build" >> .git/info/sparse-checkout
+            echo "docker" >> .git/info/sparse-checkout
+            git pull origin master;
+
+
+            # 构建 prd-dev
+            # yarn ;
+            # npm run build; 
+
+            # 启动 docker
+            cd ./docker
+            docker-compose build ; # 和 docker-compose.yml service 名字一致
+            docker-compose up -d;
+            git remote remove origin
+            rm -rf .git

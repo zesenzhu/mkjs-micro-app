@@ -1,0 +1,42 @@
+# 自动部署的名称
+name:
+  Publish And Deploy next
+  # 监听push只有是提交tag才会部署
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "v*"
+
+jobs:
+  # 打包及发布
+  build-and-deploy:
+    # 运行环境
+    runs-on: ubuntu-latest
+    steps: # 步骤
+      # 部署到服务器
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} # 连接服务器参数
+          username: ${{ secrets.USERNAME }} # 连接服务器参数
+          password: ${{ secrets.PASSWORD }} # 连接服务器参数
+          port: ${{ secrets.PORT }} # 连接服务器参数
+          script: | # 连接服务器后执行的命令
+            cd /home/mkjs-main # 确保远程服务器必须有这个文件夹
+            git remote remove origin
+            git remote add origin git@github.com:zesenzhu/mkjs-main.git;
+            # git config pull.rebase true;
+            git pull origin master;
+
+            # 在服务区打包,性能不好
+            # 构建 prd-dev
+            yarn ;
+            npm run prepublishOnly; 
+
+            # 启动 docker
+            cd ./docker
+            docker-compose build ; # 和 docker-compose.yml service 名字一致
+            docker-compose up -d;
