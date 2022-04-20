@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@master
       # - run: npm install
       - run: node -v
-      - run: npm i -g npminstall && npminstall
+      - run: yarn
       # 将app config文件打包压缩为release.tgz
       - run: npm run build:micro
       - name: Deploy to Server # 第四步，rsync推送文件
