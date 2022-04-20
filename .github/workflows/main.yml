@@ -53,7 +53,7 @@ jobs:
 
             git init
             git remote add origin git@github.com:zesenzhu/mkjs-micro-app.git;
-            # git config pull.rebase true;
+            git config pull.rebase true;
             git config core.sparsecheckout true
             echo "build" >> .git/info/sparse-checkout
             echo "docker" >> .git/info/sparse-checkout
