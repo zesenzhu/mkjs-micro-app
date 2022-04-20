@@ -49,8 +49,10 @@ jobs:
           port: ${{ secrets.PORT }} # 连接服务器参数
           script: | # 连接服务器后执行的命令
             cd ${{secrets.SERVER_DESTINATION}} # 确保远程服务器必须有这个文件夹
+            rm -rf .git
+
             git init
-            git remote add origin git@github.com:zesenzhu/mkjs-main.git;
+            git remote add origin git@github.com:zesenzhu/mkjs-micro-app.git;
             # git config pull.rebase true;
             git config core.sparsecheckout true
             echo "build" >> .git/info/sparse-checkout
@@ -58,13 +60,10 @@ jobs:
             git pull origin master;
 
 
-            # 构建 prd-dev
-            # yarn ;
-            # npm run build; 
+            git remote remove origin 
+            rm -rf .git
 
             # 启动 docker
             cd ./docker
             docker-compose build ; # 和 docker-compose.yml service 名字一致
-            docker-compose up -d;
-            git remote remove origin
-            rm -rf .git
+            docker-compose up -d --force-recreate;
