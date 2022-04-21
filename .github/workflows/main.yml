@@ -66,4 +66,4 @@ jobs:
             # 启动 docker
             cd ./docker
             docker-compose build ; # 和 docker-compose.yml service 名字一致
-            docker-compose up -d --force-recreate;
+            docker-compose up -d docker-raect-micro-app;
