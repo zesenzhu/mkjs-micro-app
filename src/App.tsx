@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import Rxjs from "./pages/rxjs";
 import { Tabs } from "antd";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import Palette from "./pages/canvas/palette";
 import Star from "./pages/canvas/star";
 const { TabPane } = Tabs;

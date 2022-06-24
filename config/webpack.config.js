@@ -74,7 +74,7 @@ const hasJsxRuntime = (() => {
     return false;
   }
 })();
-const packageName = require("./package.json").name;
+
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function (webpackEnv) {
@@ -227,10 +227,6 @@ module.exports = function (webpackEnv) {
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
       globalObject: "this",
-      // 微应用配置,让主应用识别
-      library: `${packageName}-[name]`,
-      libraryTarget: "umd",
-      jsonpFunction: `webpackJsonp_${packageName}`,
     },
     optimization: {
       minimize: isEnvProduction,
