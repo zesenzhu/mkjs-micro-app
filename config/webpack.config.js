@@ -165,6 +165,13 @@ module.exports = function (webpackEnv) {
         ? "source-map"
         : false
       : isEnvDevelopment && "cheap-module-source-map",
+
+    devServer: {
+      headers: {
+        //因为qiankun内部请求都是fetch来请求资源，所以子应用必须允许跨域
+        "Access-Control-Allow-Origin": "*",
+      },
+    },
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry:
@@ -221,12 +228,14 @@ module.exports = function (webpackEnv) {
         : isEnvDevelopment &&
           ((info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")),
+      library: `${appPackageJson.name}-[name]`,
+      libraryTarget: "umd",
       // Prevents conflicts when multiple webpack runtimes (from different apps)
       // are used on the same page.
       jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
-      globalObject: "this",
+      globalObject: "window",
     },
     optimization: {
       minimize: isEnvProduction,

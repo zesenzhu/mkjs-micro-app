@@ -4,20 +4,21 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-
+// import "./public-path";
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 declare global {
   interface Window {
     __POWERED_BY_QIANKUN__: any;
+    __INJECTED_PUBLIC_PATH_BY_QIANKUN__: any;
   }
 }
 reportWebVitals();
 
 function render(props: any) {
   const { container } = props;
-  console.log("微应用", window?.__POWERED_BY_QIANKUN__);
+  console.log("微应用", window?.__POWERED_BY_QIANKUN__, container);
   ReactDOM.render(
     <React.StrictMode>
       <BrowserRouter
@@ -31,10 +32,15 @@ function render(props: any) {
       : document.querySelector("#root")
   );
 }
-
+console.log("请求微应用");
+let __webpack_public_path__ = null;
 if (!window?.__POWERED_BY_QIANKUN__) {
   render({});
+} else {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  __webpack_public_path__ = window.__INJECTED_PUBLIC_PATH_BY_QIANKUN__;
 }
+
 /**
  * bootstrap 只会在微应用初始化的时候调用一次，下次微应用重新进入时会直接调用 mount 钩子，不会再重复触发 bootstrap。
  * 通常我们可以在这里做一些全局变量的初始化，比如不会在 unmount 阶段被销毁的应用级别的缓存等。
