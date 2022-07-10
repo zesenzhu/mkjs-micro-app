@@ -22,7 +22,9 @@ function render(props: any) {
   ReactDOM.render(
     <React.StrictMode>
       <BrowserRouter
-        basename={window?.__POWERED_BY_QIANKUN__ ? "/micro_react" : "/"}
+        basename={
+          window?.__POWERED_BY_QIANKUN__ ? "/micro_app/micro_react/" : "/"
+        }
       >
         <App />
       </BrowserRouter>
