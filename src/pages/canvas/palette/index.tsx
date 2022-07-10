@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import canvasUtils from "../../../utils/canvasUtils";
 import drawLine from "./drawLine";
 import "./index.css";
-const { captureTouch, captureClick } = canvasUtils;
+const { captureTouch, captureClick, getPixelRatio } = canvasUtils;
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -11,13 +11,13 @@ const Canvas: React.FC = () => {
   const ctxRef = useRef<CanvasRenderingContext2D | null>();
 
   const [drawType] = useState("line");
-
+  const ratioRef = useRef(window.devicePixelRatio);
   const resize = (ctx: CanvasRenderingContext2D) => {
     if (canvasRef.current && ctx) {
       canvasRef.current.height =
-        canvasRef.current?.clientHeight / window.devicePixelRatio;
+        canvasRef.current?.clientHeight * ratioRef.current;
       canvasRef.current.width =
-        canvasRef.current?.clientWidth / window.devicePixelRatio;
+        canvasRef.current?.clientWidth * ratioRef.current;
       ctx.strokeStyle = "red";
       // ctx.lineWidth = 2;
       ctx.lineJoin = "round";
@@ -28,24 +28,34 @@ const Canvas: React.FC = () => {
     if (canvasRef.current) {
       const ctx = (ctxRef.current =
         canvasRef.current?.getContext("2d")) as CanvasRenderingContext2D;
+      ratioRef.current = getPixelRatio(canvasRef.current as HTMLCanvasElement);
 
       resize(ctx);
-      captureTouch(canvasRef.current, moveEvent);
-      captureClick(canvasRef.current, moveEvent);
+      // captureTouch(canvasRef.current, moveEvent, ratioRef.current);
+      // captureClick(canvasRef.current, moveEvent, ratioRef.current);
       window.addEventListener("resize", () => {
         resize(ctx);
       });
       // draw();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log(ratioRef);
   useEffect(() => {
     let removeTouch = () => {};
     let removeClick = () => {};
     if (canvasRef.current) {
-      removeTouch = captureTouch(canvasRef.current, moveEvent);
-      removeClick = captureClick(canvasRef.current, moveEvent);
+      removeTouch = captureTouch(
+        canvasRef.current,
+        moveEvent,
+        ratioRef.current
+      );
+      removeClick = captureClick(
+        canvasRef.current,
+        moveEvent,
+        ratioRef.current
+      );
     }
 
     return () => {

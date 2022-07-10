@@ -11,14 +11,14 @@ const utils = {};
  * @return {number} Animation frame request.
  */
 if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame =
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        function(callback) {
-            return window.setTimeout(callback, 17 /*~ 1000/60*/ );
-        };
+  window.requestAnimationFrame =
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    function (callback) {
+      return window.setTimeout(callback, 17 /*~ 1000/60*/);
+    };
 }
 
 /**
@@ -29,17 +29,17 @@ if (!window.requestAnimationFrame) {
  * @param {number}  Animation frame request.
  */
 if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame =
-        window.cancelRequestAnimationFrame ||
-        window.webkitCancelAnimationFrame ||
-        window.webkitCancelRequestAnimationFrame ||
-        window.mozCancelAnimationFrame ||
-        window.mozCancelRequestAnimationFrame ||
-        window.msCancelAnimationFrame ||
-        window.msCancelRequestAnimationFrame ||
-        window.oCancelAnimationFrame ||
-        window.oCancelRequestAnimationFrame ||
-        window.clearTimeout;
+  window.cancelAnimationFrame =
+    window.cancelRequestAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.webkitCancelRequestAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.mozCancelRequestAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    window.msCancelRequestAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.oCancelRequestAnimationFrame ||
+    window.clearTimeout;
 }
 
 /**
@@ -47,187 +47,199 @@ if (!window.cancelAnimationFrame) {
  * @param {HTMLElement} element
  * @return {fn} Contains properties: x, y, event
  */
-utils.captureMouse = function(element, callback = (type, event) => {}) {
-    var mouse = { x: 0, y: 0, event: null },
-        body_scrollLeft = document.body.scrollLeft,
-        element_scrollLeft = document.documentElement.scrollLeft,
-        body_scrollTop = document.body.scrollTop,
-        element_scrollTop = document.documentElement.scrollTop,
-        offsetLeft = element.offsetLeft,
-        offsetTop = element.offsetTop;
+utils.captureMouse = function (
+  element,
+  callback = (type, event) => {},
+  ratio = window.devicePixelRatio
+) {
+  var mouse = { x: 0, y: 0, event: null },
+    body_scrollLeft = document.body.scrollLeft,
+    element_scrollLeft = document.documentElement.scrollLeft,
+    body_scrollTop = document.body.scrollTop,
+    element_scrollTop = document.documentElement.scrollTop,
+    offsetLeft = element.offsetLeft,
+    offsetTop = element.offsetTop;
 
-    element.addEventListener(
-        "mousemove",
-        function(event) {
-            var x, y;
+  element.addEventListener(
+    "mousemove",
+    function (event) {
+      var x, y;
 
-            if (event.pageX || event.pageY) {
-                x = event.pageX;
-                y = event.pageY;
-            } else {
-                x = event.clientX + body_scrollLeft + element_scrollLeft;
-                y = event.clientY + body_scrollTop + element_scrollTop;
-            }
-            x -= offsetLeft;
-            y -= offsetTop;
+      if (event.pageX || event.pageY) {
+        x = event.pageX;
+        y = event.pageY;
+      } else {
+        x = event.clientX + body_scrollLeft + element_scrollLeft;
+        y = event.clientY + body_scrollTop + element_scrollTop;
+      }
+      x -= offsetLeft;
+      y -= offsetTop;
 
-            mouse.x = x / window.devicePixelRatio;
-            mouse.y = y / window.devicePixelRatio;
-            mouse.event = event;
-            callback("mousemove", mouse);
-        },
-        false
-    );
+      mouse.x = x * ratio;
+      mouse.y = y * ratio;
+      mouse.event = event;
+      callback("mousemove", mouse);
+    },
+    false
+  );
 
-    return mouse;
+  return mouse;
 };
-utils.captureClick = function(element, callback = (type, event) => {}) {
-    var mouse = { x: 0, y: 0, isPressed: false, event: null },
-        body_scrollLeft = document.body.scrollLeft,
-        element_scrollLeft = document.documentElement.scrollLeft,
-        body_scrollTop = document.body.scrollTop,
-        element_scrollTop = document.documentElement.scrollTop,
-        offsetLeft = element.offsetLeft,
-        offsetTop = element.offsetTop;
+utils.captureClick = function (
+  element,
+  callback = (type, event) => {},
+  ratio = window.devicePixelRati
+) {
+  var mouse = { x: 0, y: 0, isPressed: false, event: null },
+    body_scrollLeft = document.body.scrollLeft,
+    element_scrollLeft = document.documentElement.scrollLeft,
+    body_scrollTop = document.body.scrollTop,
+    element_scrollTop = document.documentElement.scrollTop,
+    offsetLeft = element.offsetLeft,
+    offsetTop = element.offsetTop;
+  function getXY(event) {
+    var x, y;
 
-    function getXY(event) {
-        var x, y;
-
-        if (event.pageX || event.pageY) {
-            x = event.pageX;
-            y = event.pageY;
-        } else {
-            x = event.clientX + body_scrollLeft + element_scrollLeft;
-            y = event.clientY + body_scrollTop + element_scrollTop;
-        }
-        x -= offsetLeft;
-        y -= offsetTop;
-        return { x: x / window.devicePixelRatio, y: y / window.devicePixelRatio };
+    if (event.pageX || event.pageY) {
+      x = event.pageX;
+      y = event.pageY;
+    } else {
+      x = event.clientX + body_scrollLeft + element_scrollLeft;
+      y = event.clientY + body_scrollTop + element_scrollTop;
     }
-    const mousedown = element.addEventListener(
-        "mousedown",
-        function(event) {
-            const { x, y } = getXY(event);
-            mouse.isPressed = true;
-            mouse.event = event;
-            mouse.x = x;
-            mouse.y = y;
-            callback("mousedown", mouse);
-        },
-        false
-    );
-    const mouseup = element.addEventListener(
-        "mouseup",
-        function(event) {
-            const { x, y } = getXY(event);
-            mouse.isPressed = false;
-            mouse.x = x;
-            mouse.y = y;
-            mouse.event = event;
-            callback("mouseup", mouse);
-        },
-        false
-    );
-    const mousemove = element.addEventListener(
-        "mousemove",
-        function(event) {
-            if (!mouse.isPressed) {
-                return;
-            }
-            const { x, y } = getXY(event);
+    x -= offsetLeft;
+    y -= offsetTop;
+    return { x: x * ratio, y: y * ratio };
+  }
+  const mousedown = element.addEventListener(
+    "mousedown",
+    function (event) {
+      const { x, y } = getXY(event);
+      mouse.isPressed = true;
+      mouse.event = event;
+      mouse.x = x;
+      mouse.y = y;
+      callback("mousedown", mouse);
+    },
+    false
+  );
+  const mouseup = element.addEventListener(
+    "mouseup",
+    function (event) {
+      const { x, y } = getXY(event);
+      mouse.isPressed = false;
+      mouse.x = x;
+      mouse.y = y;
+      mouse.event = event;
+      callback("mouseup", mouse);
+    },
+    false
+  );
+  const mousemove = element.addEventListener(
+    "mousemove",
+    function (event) {
+      if (!mouse.isPressed) {
+        return;
+      }
+      const { x, y } = getXY(event);
 
-            mouse.x = x;
-            mouse.y = y;
-            mouse.event = event;
-            callback("mousemove", mouse);
-        },
-        false
-    );
+      mouse.x = x;
+      mouse.y = y;
+      mouse.event = event;
 
-    return () => {
-        element.removeEventListener("mousedown", mousedown);
-        element.removeEventListener("mouseup", mouseup);
-        element.removeEventListener("mousemove", mousemove);
-    };
+      callback("mousemove", mouse);
+    },
+    false
+  );
+
+  return () => {
+    element.removeEventListener("mousedown", mousedown);
+    element.removeEventListener("mouseup", mouseup);
+    element.removeEventListener("mousemove", mousemove);
+  };
 };
 /**
  * Keeps track of the current (first) touch position, relative to an element.
  * @param {HTMLElement} element
  * @return {fn} Contains properties: x, y, isPressed, event
  */
-utils.captureTouch = function(element, callback = (type, event) => {}) {
-    var touch = { x: null, y: null, isPressed: false, event: null },
-        body_scrollLeft = document.body.scrollLeft,
-        element_scrollLeft = document.documentElement.scrollLeft,
-        body_scrollTop = document.body.scrollTop,
-        element_scrollTop = document.documentElement.scrollTop,
-        offsetLeft = element.offsetLeft,
-        offsetTop = element.offsetTop;
+utils.captureTouch = function (
+  element,
+  callback = (type, event) => {},
+  ratio = window.devicePixelRatio
+) {
+  var touch = { x: null, y: null, isPressed: false, event: null },
+    body_scrollLeft = document.body.scrollLeft,
+    element_scrollLeft = document.documentElement.scrollLeft,
+    body_scrollTop = document.body.scrollTop,
+    element_scrollTop = document.documentElement.scrollTop,
+    offsetLeft = element.offsetLeft,
+    offsetTop = element.offsetTop;
 
-    function getXY(event) {
-        var x,
-            y,
-            touch_event = event.touches[0]; //first touch
-        if (!touch_event) {
-            return { x: null, y: null };
-        }
-        if (touch_event.pageX || touch_event.pageY) {
-            x = touch_event.pageX;
-            y = touch_event.pageY;
-        } else {
-            x = touch_event.clientX + body_scrollLeft + element_scrollLeft;
-            y = touch_event.clientY + body_scrollTop + element_scrollTop;
-        }
-        x -= offsetLeft;
-        y -= offsetTop;
-        return { x: x / window.devicePixelRatio, y: y / window.devicePixelRatio };
+  function getXY(event) {
+    var x,
+      y,
+      touch_event = event.touches[0]; //first touch
+    if (!touch_event) {
+      return { x: null, y: null };
     }
-    const touchstart = element.addEventListener(
-        "touchstart",
-        function(event) {
-            const { x, y } = getXY(event);
+    if (touch_event.pageX || touch_event.pageY) {
+      x = touch_event.pageX;
+      y = touch_event.pageY;
+    } else {
+      x = touch_event.clientX + body_scrollLeft + element_scrollLeft;
+      y = touch_event.clientY + body_scrollTop + element_scrollTop;
+    }
+    x -= offsetLeft;
+    y -= offsetTop;
+    return { x: x * ratio, y: y * ratio };
+  }
+  const touchstart = element.addEventListener(
+    "touchstart",
+    function (event) {
+      const { x, y } = getXY(event);
 
-            touch.isPressed = true;
-            touch.event = event;
-            touch.x = x;
-            touch.y = y;
-            callback("touchstart", touch);
-        },
-        false
-    );
+      touch.isPressed = true;
+      touch.event = event;
+      touch.x = x;
+      touch.y = y;
+      callback("touchstart", touch);
+    },
+    false
+  );
 
-    const touchend = element.addEventListener(
-        "touchend",
-        function(event) {
-            const { x, y } = getXY(event);
+  const touchend = element.addEventListener(
+    "touchend",
+    function (event) {
+      const { x, y } = getXY(event);
 
-            touch.isPressed = false;
-            touch.x = x;
-            touch.y = y;
-            touch.event = event;
-            callback("touchend", touch);
-        },
-        false
-    );
+      touch.isPressed = false;
+      touch.x = x;
+      touch.y = y;
+      touch.event = event;
+      callback("touchend", touch);
+    },
+    false
+  );
 
-    const touchmove = element.addEventListener(
-        "touchmove",
-        function(event) {
-            const { x, y } = getXY(event);
+  const touchmove = element.addEventListener(
+    "touchmove",
+    function (event) {
+      const { x, y } = getXY(event);
 
-            touch.x = x;
-            touch.y = y;
-            touch.event = event;
-            callback("touchmove", touch);
-        },
-        false
-    );
+      touch.x = x;
+      touch.y = y;
+      touch.event = event;
+      callback("touchmove", touch);
+    },
+    false
+  );
 
-    return () => {
-        element.removeEventListener("touchstart", touchstart);
-        element.removeEventListener("touchend", touchend);
-        element.removeEventListener("touchmove", touchmove);
-    };
+  return () => {
+    element.removeEventListener("touchstart", touchstart);
+    element.removeEventListener("touchend", touchend);
+    element.removeEventListener("touchmove", touchmove);
+  };
 };
 
 /**
@@ -236,21 +248,21 @@ utils.captureTouch = function(element, callback = (type, event) => {}) {
  * @param {boolean=}      toNumber=false  Return color as a hex number.
  * @return {string|number}
  */
-utils.parseColor = function(color, toNumber) {
-    if (toNumber === true) {
-        if (typeof color === "number") {
-            return color | 0; //chop off decimal
-        }
-        if (typeof color === "string" && color[0] === "#") {
-            color = color.slice(1);
-        }
-        return window.parseInt(color, 16);
-    } else {
-        if (typeof color === "number") {
-            color = "#" + ("00000" + (color | 0).toString(16)).substr(-6); //pad
-        }
-        return color;
+utils.parseColor = function (color, toNumber) {
+  if (toNumber === true) {
+    if (typeof color === "number") {
+      return color | 0; //chop off decimal
     }
+    if (typeof color === "string" && color[0] === "#") {
+      color = color.slice(1);
+    }
+    return window.parseInt(color, 16);
+  } else {
+    if (typeof color === "number") {
+      color = "#" + ("00000" + (color | 0).toString(16)).substr(-6); //pad
+    }
+    return color;
+  }
 };
 
 /**
@@ -259,23 +271,23 @@ utils.parseColor = function(color, toNumber) {
  * @param {number}        alpha
  * @return {string}
  */
-utils.colorToRGB = function(color, alpha) {
-    //number in octal format or string prefixed with #
-    if (typeof color === "string" && color[0] === "#") {
-        color = window.parseInt(color.slice(1), 16);
-    }
-    alpha = alpha === undefined ? 1 : alpha;
-    //parse hex values
-    var r = (color >> 16) & 0xff,
-        g = (color >> 8) & 0xff,
-        b = color & 0xff,
-        a = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
-    //only use 'rgba' if needed
-    if (a === 1) {
-        return "rgb(" + r + "," + g + "," + b + ")";
-    } else {
-        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-    }
+utils.colorToRGB = function (color, alpha) {
+  //number in octal format or string prefixed with #
+  if (typeof color === "string" && color[0] === "#") {
+    color = window.parseInt(color.slice(1), 16);
+  }
+  alpha = alpha === undefined ? 1 : alpha;
+  //parse hex values
+  var r = (color >> 16) & 0xff,
+    g = (color >> 8) & 0xff,
+    b = color & 0xff,
+    a = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
+  //only use 'rgba' if needed
+  if (a === 1) {
+    return "rgb(" + r + "," + g + "," + b + ")";
+  } else {
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
 };
 
 /**
@@ -285,13 +297,13 @@ utils.colorToRGB = function(color, alpha) {
  * @param {number}  y     Coordinate position y.
  * @return {boolean}
  */
-utils.containsPoint = function(rect, x, y) {
-    return !(
-        x < rect.x ||
-        x > rect.x + rect.width ||
-        y < rect.y ||
-        y > rect.y + rect.height
-    );
+utils.containsPoint = function (rect, x, y) {
+  return !(
+    x < rect.x ||
+    x > rect.x + rect.width ||
+    y < rect.y ||
+    y > rect.y + rect.height
+  );
 };
 
 /**
@@ -300,13 +312,29 @@ utils.containsPoint = function(rect, x, y) {
  * @param {object}  rectB Object with properties: x, y, width, height.
  * @return {boolean}
  */
-utils.intersects = function(rectA, rectB) {
-    return !(
-        rectA.x + rectA.width < rectB.x ||
-        rectB.x + rectB.width < rectA.x ||
-        rectA.y + rectA.height < rectB.y ||
-        rectB.y + rectB.height < rectA.y
-    );
+utils.intersects = function (rectA, rectB) {
+  return !(
+    rectA.x + rectA.width < rectB.x ||
+    rectB.x + rectB.width < rectA.x ||
+    rectA.y + rectA.height < rectB.y ||
+    rectB.y + rectB.height < rectA.y
+  );
 };
 
-export default utils;
+// 获取设备像素比
+const getPixelRatio = (context = {}) => {
+  // backingStore 获取浏览器像素和真实像素比
+  // 这个属性大部分浏览器都已废弃
+  const backingStore =
+    context.backingStorePixelRatio ||
+    context.webkitBackingStorePixelRatio ||
+    context.mozBackingStorePixelRatio ||
+    context.msBackingStorePixelRatio ||
+    context.oBackingStorePixelRatio ||
+    context.backingStorePixelRatio ||
+    1;
+  return (window.devicePixelRatio || 1) / backingStore;
+};
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default { ...utils, getPixelRatio };

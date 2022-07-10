@@ -28,7 +28,7 @@ type StarKeyType = StarType & { connectStar: StarType[]; connected?: boolean };
 //记录当前界面存活的点
 const starList: Record<number, StarKeyType> = {};
 let starKey = 0;
-const distance = 30; //star之间的距离小于就连线
+const distance = 90; //star之间的距离小于就连线
 
 let a = 0;
 export default class star implements StarInterface {
@@ -68,7 +68,7 @@ export default class star implements StarInterface {
   drawStar = () => {
     const { ctx, x, y } = this;
     ctx.beginPath();
-    ctx.arc(x, y, 1.5, 0, Math.PI * 2, true);
+    ctx.arc(x, y, 3, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.fill();
   };
@@ -124,7 +124,6 @@ export default class star implements StarInterface {
     }
     for (let key in starList) {
       const { x, y, connectStar } = starList[key];
-
       connectStar.forEach((c) => {
         ctx.beginPath();
         ctx.moveTo(x, y);

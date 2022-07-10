@@ -1,22 +1,32 @@
 import React, { useEffect, useRef } from "react";
 import Star, { StarInterface } from "./star";
+import utils from "utils/canvasUtils";
+
 let animatedFrame: null | number = null;
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
+  console.log(utils);
   const ctxRef = useRef<CanvasRenderingContext2D | null>();
-  const resize = (ctx: CanvasRenderingContext2D) => {
+  const resize = () => {
+    const ctx = ctxRef.current as CanvasRenderingContext2D;
+
     if (animatedFrame) {
+      ctx?.clearRect(
+        0,
+        0,
+        canvasRef.current?.width as number,
+        canvasRef.current?.height as number
+      );
       window.cancelAnimationFrame(animatedFrame);
     }
     if (canvasRef.current) {
       canvasRef.current.height =
-        canvasRef.current?.clientHeight / window.devicePixelRatio;
+        canvasRef.current?.clientHeight * window.devicePixelRatio;
       canvasRef.current.width =
-        canvasRef.current?.clientWidth / window.devicePixelRatio;
+        canvasRef.current?.clientWidth * window.devicePixelRatio;
       ctx.strokeStyle = "red";
       ctx.fillStyle = "red";
-      ctx.lineWidth = 0.1;
+      ctx.lineWidth = 0.2;
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       let list = [];
@@ -24,12 +34,12 @@ const Canvas: React.FC = () => {
         const star = new Star({ ctx });
         list.push(star);
       }
-      console.log(canvasRef.current, canvasRef.current?.clientHeight);
+      console.log(animatedFrame, canvasRef.current, canvasRef.current?.width);
 
-      animatedFrame = draw(list);
+      draw(list);
     }
   };
-  const draw = (list: StarInterface[]): number => {
+  const draw = (list: StarInterface[]) => {
     ctxRef?.current?.clearRect(
       0,
       0,
@@ -41,20 +51,21 @@ const Canvas: React.FC = () => {
     });
 
     Star.connectStarLine(ctxRef.current as CanvasRenderingContext2D);
-    return window.requestAnimationFrame(draw.bind(this, list));
+    animatedFrame = window.requestAnimationFrame(draw.bind(this, list));
   };
   useEffect(() => {
     if (canvasRef.current) {
-      const ctx = (ctxRef.current =
+      (ctxRef.current =
         canvasRef.current.getContext("2d")) as CanvasRenderingContext2D;
 
-      resize(ctx);
+      resize();
 
       window.addEventListener("resize", () => {
-        resize(ctx);
+        resize();
       });
       // draw();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
