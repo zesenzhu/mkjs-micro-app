@@ -5,6 +5,8 @@ import { Tabs } from "antd";
 import "antd/dist/antd.min.css";
 import Palette from "./pages/canvas/palette";
 import Star from "./pages/canvas/star";
+import Jotai from "./pages/jotai";
+import Circle from "./pages/circle";
 const { TabPane } = Tabs;
 function App() {
   const TabList = [
@@ -19,6 +21,14 @@ function App() {
     {
       children: <Rxjs />,
       tab: "rxjs使用",
+    },
+    {
+      children: <Jotai />,
+      tab: "共享状态",
+    },
+    {
+      children: <Circle />,
+      tab: "轮播动画",
     },
     {
       children: "",

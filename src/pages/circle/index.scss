@@ -1,0 +1,29 @@
+.circle {
+  background-color: aquamarine;
+  position: relative;
+  height: 100%;
+  .child {
+    // position: absolute;
+    height: 100px;
+    width: 100px;
+    background-color: bisque;
+    border-radius: 50px;
+    opacity: 1;
+    transform: translateY(0%);
+    position: absolute;
+    // transition: ;
+  }
+  .main {
+    transition: opacity 1s;
+  }
+  .animate {
+    opacity: 0;
+  }
+  .other {
+    transition: transform 1s;
+    // position: absolute;
+  }
+  .animate2 {
+    // transform: translateY(-100px);
+  }
+}

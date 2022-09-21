@@ -60,6 +60,7 @@
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
+    "jotai": "^1.7.6",
     "mini-css-extract-plugin": "0.11.3",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
@@ -136,6 +137,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^7.11.3",
     "eslint-config-react-app": "^7.0.1",
+    "node-sass": "^7.0.1",
     "react-scripts": "^5.0.1"
   },
   "jest": {
