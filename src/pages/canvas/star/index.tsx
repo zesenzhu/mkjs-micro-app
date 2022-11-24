@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import Star, { StarInterface } from './star'
-import utils from 'utils/canvasUtils'
+// import utils from 'utils/canvasUtils'
 
 let animatedFrame: null | number = null
 const Canvas: React.FC = () => {

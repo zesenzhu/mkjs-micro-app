@@ -3,7 +3,6 @@ import './index.scss'
 import { Snake } from './utils'
 export default function Index() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const ctxRef = useRef<CanvasRenderingContext2D | null>()
   useEffect(() => {
     if (canvasRef.current) {
       const snake = new Snake(canvasRef.current, { speed: 2 })
