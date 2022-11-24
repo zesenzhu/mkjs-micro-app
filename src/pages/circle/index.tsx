@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
-import "./index.scss";
+import { useState } from 'react'
+import './index.scss'
 export default function App() {
-  const [data, useData] = useState(new Array(5).fill(1).map((c, i) => i));
+  const [data] = useState(new Array(5).fill(1).map((c, i) => i))
   // useEffect(() => {
   //   let time = data.length;
   //   const timer = setInterval(() => {
@@ -24,15 +24,15 @@ export default function App() {
         return (
           <div
             className={`child child_${c} ${
-              i === 0 ? "main animate" : "other animate2"
+              i === 0 ? 'main animate' : 'other animate2'
             } `}
             style={{ left: `translateX(${80 * i}%)` }}
             key={c}
           >
             {c}
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
