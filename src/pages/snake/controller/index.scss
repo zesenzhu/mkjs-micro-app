@@ -1,0 +1,32 @@
+.controller {
+  position: relative;
+  width: 100%;
+  height: 375px;
+
+  .btn {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: brown;
+  }
+  .Up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .Right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .Down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .Left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
